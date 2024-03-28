@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuário</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/script_user.js" defer></script>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="../index.html">HOME</a></li>
+        </ul>
+    </nav>
+
+    <nav>
+      <ul>
+        <li>
+          <a href="cadastro_usuarios.html">Cadastro de Usuário</a>
+        </li>
+        <li>
+          <a href="../produto/cadastro_produtos.html">Cadastro de Produto</a>
+        </li>
+        <li>
+          <a href="usuarios.html">Lista de Usuários</a>
+        </li>
+        <li>
+          <a href="../produto/produtos.html">Lista de Produtos</a>
+        </li>
+        <br>
+        <li>
+          <a href="modifica_user.html">Modifica Usuários</a>
+        </li>
+        <li>
+          <a href="../produto/modifica_produto.html">Modifica Produtos</a>
+        </li>
+        <li>
+          <a href="../lista_completa.html">Lista Completa</a>
+        </li>
+      </ul>
+    </nav>
+
+    <h1>Editar Usuário</h1>
+
+    <select id="select-usuario">
+        <option value="">Selecione um usuário</option>
+    </select>
+
+    <form id="edit-form">
+        <label for="edit-nome">NOME:</label>
+        <input type="text" id="edit-nome" placeholder="Digite o novo nome do usuário">
+
+        <label for="edit-email">EMAIL:</label>
+        <input type="text" id="edit-email" placeholder="Digite o novo email do usuário">
+
+        <button type="submit">ATUALIZAR</button>
+    </form>
+
+    <script>
+        const selectUsuario = document.querySelector("#select-usuario");
+        const form = document.querySelector("#edit-form");
+        const nomeInput = document.querySelector("#edit-nome");
+        const emailInput = document.querySelector("#edit-email");
+
+        const dadosUsuarios = JSON.parse(localStorage.getItem("dadosUsuarios"));
+
+        dadosUsuarios.forEach(usuario => {
+            const option = document.createElement("option");
+            option.value = usuario.email;
+            option.textContent = usuario.nome;
+            selectUsuario.appendChild(option);
+        });
+
+        selectUsuario.addEventListener("change", (event) => {
+            const emailSelecionado = event.target.value;
+            const usuarioSelecionado = dadosUsuarios.find(usuario => usuario.email === emailSelecionado);
+            if (usuarioSelecionado) {
+                nomeInput.value = usuarioSelecionado.nome;
+                emailInput.value = usuarioSelecionado.email;
+            } else {
+                nomeInput.value = "";
+                emailInput.value = "";
+            }
+        });
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const emailSelecionado = selectUsuario.value;
+            if (!emailSelecionado) {
+                alert("Selecione um usuário para editar.");
+                return;
+            }
+            atualizarUsuario(emailSelecionado, nomeInput.value, emailInput.value);
+            window.location.href = "../usuario/usuarios.html";
+        });
+
+        function atualizarUsuario(email, novoNome, novoEmail) {
+            let dadosUsuarios = JSON.parse(localStorage.getItem("dadosUsuarios"));
+            const index = dadosUsuarios.findIndex(usuario => usuario.email === email);
+            if (index !== -1) {
+                dadosUsuarios[index].nome = novoNome;
+                dadosUsuarios[index].email = novoEmail;
+                localStorage.setItem("dadosUsuarios", JSON.stringify(dadosUsuarios));
+            }
+        }
+    </script>
+
+</body>
+</html>

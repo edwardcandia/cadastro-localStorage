@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Produto</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/script_prod.js" defer></script>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="../index.html">HOME</a></li>
+        </ul>
+    </nav>
+
+
+    <nav>
+      <ul>
+        <li>
+          <a href="../usuario/cadastro_usuarios.html">Cadastro de Usuário</a>
+        </li>
+        <li>
+          <a href="cadastro_produtos.html">Cadastro de Produto</a>
+        </li>
+        <li>
+          <a href="../usuario/usuarios.html">Lista de Usuários</a>
+        </li>
+        <li>
+          <a href="produtos.html">Lista de Produtos</a>
+        </li>
+        <br>
+        <li>
+          <a href="../usuario/modifica_user.html">Modifica Usuários</a>
+        </li>
+        <li>
+          <a href="modifica_produto.html">Modifica Produtos</a>
+        </li>
+        <li>
+          <a href="../lista_completa.html">Lista Completa</a>
+        </li>
+      </ul>
+    </nav>
+
+    <h1>Editar Produto</h1>
+
+    <select id="select-produto">
+        <option value="">Selecione um produto</option>
+    </select>
+
+    <form id="edit-form">
+        <label for="edit-nome">NOME PRODUTO:</label>
+        <input type="text" id="edit-nome" placeholder="Digite o novo nome do produto">
+
+        <label for="edit-codigo">CÓDIGO PRODUTO:</label>
+        <input type="text" id="edit-codigo" placeholder="Digite o novo código do produto">
+
+        <button type="submit">ATUALIZAR</button>
+    </form>
+
+    <script>
+        const selectProduto = document.querySelector("#select-produto");
+        const form = document.querySelector("#edit-form");
+        const nomeInput = document.querySelector("#edit-nome");
+        const codigoInput = document.querySelector("#edit-codigo");
+
+        const dadosProdutos = JSON.parse(localStorage.getItem("dadosProdutos"));
+
+        dadosProdutos.forEach(produto => {
+            const option = document.createElement("option");
+            option.value = produto.codigo_produto;
+            option.textContent = produto.nome_produto;
+            selectProduto.appendChild(option);
+        });
+
+        selectProduto.addEventListener("change", (event) => {
+            const codigoSelecionado = event.target.value;
+            const produtoSelecionado = dadosProdutos.find(produto => produto.codigo_produto === codigoSelecionado);
+            if (produtoSelecionado) {
+                nomeInput.value = produtoSelecionado.nome_produto;
+                codigoInput.value = produtoSelecionado.codigo_produto;
+            } else {
+                nomeInput.value = "";
+                codigoInput.value = "";
+            }
+        });
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const codigoSelecionado = selectProduto.value;
+            if (!codigoSelecionado) {
+                alert("Selecione um produto para editar.");
+                return;
+            }
+            atualizarProduto(codigoSelecionado, nomeInput.value, codigoInput.value);
+            window.location.href = "../produto/produtos.html";
+        });
+
+        function atualizarProduto(id, novoNome, novoCodigo) {
+            let dadosProdutos = JSON.parse(localStorage.getItem("dadosProdutos"));
+            const index = dadosProdutos.findIndex(produto => produto.codigo_produto === id);
+            if (index !== -1) {
+                dadosProdutos[index].nome_produto = novoNome;
+                dadosProdutos[index].codigo_produto = novoCodigo;
+                localStorage.setItem("dadosProdutos", JSON.stringify(dadosProdutos));
+            }
+        }
+    </script>
+
+</body>
+</html>
