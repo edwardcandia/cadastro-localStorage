@@ -1,2 +1,2 @@
 # cadastro-localStorage
-Exercício de Web
+Projeto Web usando LocalStorage
